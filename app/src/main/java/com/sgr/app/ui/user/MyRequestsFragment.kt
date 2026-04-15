@@ -92,7 +92,7 @@ class MyRequestsFragment : Fragment() {
                     } else {
                         binding.recyclerView.adapter = MyReservationAdapter(
                             items = page.content,
-                            onView = { showViewReservationDialog(it) },
+                            onView = { navigateToDetail(it) },
                             onCancel = { showCancelConfirmDialog(it, session) },
                             onEdit = { showEditReservationDialog(it) },
                             onViewRejection = { showRejectionReasonDialog(it) }
@@ -112,6 +112,13 @@ class MyRequestsFragment : Fragment() {
         "CANCELADA" -> "Cancelada"
         "DEVUELTA" -> "Devuelta"
         else -> status
+    }
+
+    private fun navigateToDetail(r: Reservation) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, ReservationDetailFragment.newInstance(r))
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun showViewReservationDialog(r: Reservation) {
@@ -136,7 +143,7 @@ class MyRequestsFragment : Fragment() {
             view.findViewById<TextView>(R.id.tvDRequesterType).text = requesterTypeLabel
 
             // Reserva
-            view.findViewById<TextView>(R.id.tvDId).text           = "#${res.id}"
+            view.findViewById<TextView>(R.id.tvDId).text           = "${res.id}"
             view.findViewById<TextView>(R.id.tvDStatus).text       = statusLabel(res.status ?: "")
             view.findViewById<TextView>(R.id.tvDResource).text     = resourceName ?: "—"
             view.findViewById<TextView>(R.id.tvDResourceType).text = resourceType
@@ -257,9 +264,11 @@ class MyRequestsFragment : Fragment() {
                     (parts[1].toIntOrNull() ?: 1) - 1,
                     parts[2].toIntOrNull() ?: cal.get(Calendar.DAY_OF_MONTH))
             }
-            DatePickerDialog(requireContext(), { _, y, m, d ->
+            val picker = DatePickerDialog(requireContext(), { _, y, m, d ->
                 et.setText("%04d-%02d-%02d".format(y, m + 1, d))
-            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
+            picker.datePicker.minDate = System.currentTimeMillis()
+            picker.show()
         }
 
         // Helper: muestra TimePickerDialog y escribe HH:MM en el EditText
@@ -335,7 +344,25 @@ class MyRequestsFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            lifecycleScope.launch {
+            // Validar que la fecha/hora de inicio no sea en el pasado
+            try {
+                val now = Calendar.getInstance()
+                val startCal = Calendar.getInstance()
+                val dp = startDate.split("-")
+                val tp = startTime.split(":")
+                startCal.set(dp[0].toInt(), dp[1].toInt() - 1, dp[2].toInt(), tp[0].toInt(), tp[1].toInt(), 0)
+                startCal.set(Calendar.MILLISECOND, 0)
+                if (startCal.before(now)) {
+                    Toast.makeText(requireContext(), "No puedes reservar en una fecha u hora pasada", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+            } catch (_: Exception) { }
+
+            AlertDialog.Builder(requireContext())
+                .setTitle("¿Guardar cambios?")
+                .setMessage("Se actualizará tu solicitud. ¿Deseas continuar?")
+                .setPositiveButton("Sí, guardar") { _, _ ->
+                lifecycleScope.launch {
                 try {
                     val api = RetrofitClient.create(requireContext())
 
@@ -392,6 +419,9 @@ class MyRequestsFragment : Fragment() {
                     Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_SHORT).show()
                 }
             }
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
 
         dialog.show()
@@ -421,8 +451,7 @@ class MyReservationAdapter(
             val resourceName = r.resourceName ?: if (r.resourceType == "SPACE") r.spaceName else r.equipmentName
             val resourceType = if (r.resourceType == "SPACE") "Espacio" else "Equipo"
 
-            findViewById<TextView>(R.id.tvId).text = "#${r.id}"
-            findViewById<TextView>(R.id.tvResourceName).text = resourceName ?: "—"
+findViewById<TextView>(R.id.tvResourceName).text = resourceName ?: "—"
             findViewById<TextView>(R.id.tvType).text = resourceType
             findViewById<TextView>(R.id.tvDate).text = r.reservationDate ?: "—"
             findViewById<TextView>(R.id.tvEndDate).text = r.endDate ?: "—"

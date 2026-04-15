@@ -1,115 +1,331 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:layout_height="wrap_content">
 
-    <!-- Fila 1: N° Inventario | Nombre del Equipo -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal" android:layout_marginBottom="10dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="@color/white">
 
-        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1" android:layout_marginEnd="6dp"
-            android:orientation="vertical" android:padding="12dp"
-            android:background="@drawable/bg_detail_card">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Número de Inventario" android:textSize="11sp"
-                android:textColor="#6B7280" android:layout_marginBottom="4dp"/>
-            <TextView android:id="@+id/tvDetailInvNumber"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="—" android:textSize="14sp" android:textStyle="bold"
+        <!-- ── HEADER ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Detalle de Equipo"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#111827"/>
+
+            <TextView
+                android:id="@+id/btnEquipDetailClose"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="✕"
+                android:textSize="18sp"
+                android:textColor="#94A3B8"
+                android:clickable="true"
+                android:focusable="true"/>
+        </LinearLayout>
+
+        <!-- ── IDENTIFICACIÓN ── -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IDENTIFICACIÓN"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#374151"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_detail_card"
+            android:layout_marginBottom="16dp">
+
+            <!-- Número de inventario | Nombre del equipo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Número de inventario"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:textColor="#9CA3AF"
+                        android:layout_marginBottom="4dp"/>
+                    <TextView
+                        android:id="@+id/tvDetailInvNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#111827"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#E5E7EB"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nombre del equipo"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:textColor="#9CA3AF"
+                        android:layout_marginBottom="4dp"/>
+                    <TextView
+                        android:id="@+id/tvDetailName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#111827"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E5E7EB"/>
+
+            <!-- Tipo | Espacio asociado -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tipo"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:textColor="#9CA3AF"
+                        android:layout_marginBottom="4dp"/>
+                    <TextView
+                        android:id="@+id/tvDetailCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#111827"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#E5E7EB"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Espacio asociado"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:textColor="#9CA3AF"
+                        android:layout_marginBottom="4dp"/>
+                    <TextView
+                        android:id="@+id/tvDetailSpace"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#111827"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ── ESTADO Y ACCESO ── -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ESTADO Y ACCESO"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#374151"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_detail_card"
+            android:layout_marginBottom="16dp">
+
+            <!-- Estado | Condición -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Estado"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:textColor="#9CA3AF"
+                        android:layout_marginBottom="4dp"/>
+                    <TextView
+                        android:id="@+id/tvDetailStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#111827"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#E5E7EB"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Condición"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:textColor="#9CA3AF"
+                        android:layout_marginBottom="4dp"/>
+                    <TextView
+                        android:id="@+id/tvDetailCondition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#111827"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E5E7EB"/>
+
+            <!-- Acceso para estudiantes -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Acceso para estudiantes"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:textColor="#9CA3AF"
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tvDetailStudents"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#111827"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ── DESCRIPCIÓN ── -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DESCRIPCIÓN"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#374151"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_detail_card"
+            android:padding="12dp"
+            android:layout_marginBottom="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detalle"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:textColor="#9CA3AF"
+                android:layout_marginBottom="4dp"/>
+            <TextView
+                android:id="@+id/tvDetailDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="—"
+                android:textSize="14sp"
                 android:textColor="#111827"/>
         </LinearLayout>
 
-        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1" android:orientation="vertical" android:padding="12dp"
-            android:background="@drawable/bg_detail_card">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Nombre del Equipo" android:textSize="11sp"
-                android:textColor="#6B7280" android:layout_marginBottom="4dp"/>
-            <TextView android:id="@+id/tvDetailName"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="—" android:textSize="14sp" android:textStyle="bold"
-                android:textColor="#111827"/>
-        </LinearLayout>
+        <!-- Botón Cerrar -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEquipDetailDismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="Cerrar"
+            android:textSize="13sp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
     </LinearLayout>
-
-    <!-- Fila 2: Tipo | Acceso para estudiantes -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal" android:layout_marginBottom="10dp">
-
-        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1" android:layout_marginEnd="6dp"
-            android:orientation="vertical" android:padding="12dp"
-            android:background="@drawable/bg_detail_card">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Tipo" android:textSize="11sp"
-                android:textColor="#6B7280" android:layout_marginBottom="4dp"/>
-            <TextView android:id="@+id/tvDetailCategory"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="—" android:textSize="14sp" android:textStyle="bold"
-                android:textColor="#111827"/>
-        </LinearLayout>
-
-        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1" android:orientation="vertical" android:padding="12dp"
-            android:background="@drawable/bg_detail_card">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Acceso para estudiantes" android:textSize="11sp"
-                android:textColor="#6B7280" android:layout_marginBottom="4dp"/>
-            <TextView android:id="@+id/tvDetailStudents"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="—" android:textSize="14sp" android:textStyle="bold"
-                android:textColor="#111827"/>
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Fila 3: Descripción (ancho completo) -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal" android:layout_marginBottom="10dp">
-
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:padding="12dp"
-            android:background="@drawable/bg_detail_card">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Descripción" android:textSize="11sp"
-                android:textColor="#6B7280" android:layout_marginBottom="4dp"/>
-            <TextView android:id="@+id/tvDetailDescription"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="—" android:textSize="14sp" android:textStyle="bold"
-                android:textColor="#111827"/>
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Fila 4: Estado | Condición -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1" android:layout_marginEnd="6dp"
-            android:orientation="vertical" android:padding="12dp"
-            android:background="@drawable/bg_detail_card">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Estado" android:textSize="11sp"
-                android:textColor="#6B7280" android:layout_marginBottom="4dp"/>
-            <TextView android:id="@+id/tvDetailStatus"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="—" android:textSize="14sp" android:textStyle="bold"
-                android:textColor="#111827"/>
-        </LinearLayout>
-
-        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1" android:orientation="vertical" android:padding="12dp"
-            android:background="@drawable/bg_detail_card">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Condición" android:textSize="11sp"
-                android:textColor="#6B7280" android:layout_marginBottom="4dp"/>
-            <TextView android:id="@+id/tvDetailCondition"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="—" android:textSize="14sp" android:textStyle="bold"
-                android:textColor="#111827"/>
-        </LinearLayout>
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

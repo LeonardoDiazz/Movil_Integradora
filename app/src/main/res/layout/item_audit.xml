@@ -3,24 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="4dp"
+    android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="4dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     app:cardCornerRadius="12dp"
-    app:cardElevation="3dp">
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#ffffff">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="14dp">
 
-        <!-- Row 1: Resource name + Status badge -->
+        <!-- Row 1: Nombre recurso + badge estatus -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="4dp">
+            android:layout_marginBottom="3dp">
 
             <TextView
                 android:id="@+id/tvResourceName"
@@ -28,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Recurso"
-                android:textColor="@color/text_primary"
+                android:textColor="#111827"
                 android:textSize="15sp"
                 android:textStyle="bold"/>
 
@@ -38,43 +42,51 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="PENDIENTE"
+                android:text="Pendiente"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:textColor="@color/white"
-                android:background="@drawable/bg_status_pending"/>
+                android:textColor="#92400E"
+                android:background="@drawable/bg_badge_yellow"/>
         </LinearLayout>
 
-        <!-- Row 2: Requester name -->
+        <!-- Row 2: Nombre solicitante -->
         <TextView
             android:id="@+id/tvRequesterName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Solicitante"
-            android:textColor="@color/gray_text"
-            android:textSize="12sp"
+            android:text="SOLICITANTE"
+            android:textColor="#94a3b8"
+            android:textSize="11sp"
+            android:textStyle="bold"
             android:textAllCaps="true"
             android:layout_marginBottom="10dp"/>
 
-        <!-- Row 3: Category badge + Date + Schedule -->
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#f1f5f9"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- Row 3: Categoría + Fecha + Horario -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tvCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="3dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
                 android:text="Espacio"
                 android:textSize="11sp"
-                android:textColor="#6D28D9"
+                android:textStyle="bold"
+                android:textColor="#7c3aed"
                 android:background="@drawable/bg_chip_category"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="12dp"/>
 
             <TextView
                 android:id="@+id/tvAuditDate"
@@ -82,7 +94,15 @@
                 android:layout_height="wrap_content"
                 android:text="—"
                 android:textSize="12sp"
-                android:textColor="@color/gray_text"
+                android:textColor="#64748b"
+                android:layout_marginEnd="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="·"
+                android:textSize="12sp"
+                android:textColor="#cbd5e1"
                 android:layout_marginEnd="10dp"/>
 
             <TextView
@@ -92,18 +112,8 @@
                 android:layout_weight="1"
                 android:text="—"
                 android:textSize="12sp"
-                android:textColor="@color/gray_text"/>
+                android:textColor="#64748b"/>
         </LinearLayout>
-
-        <!-- Ver detalle button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAuditViewDetail"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:text="Ver detalle"
-            android:textSize="11sp"
-            android:backgroundTint="#1D4ED8"
-            style="@style/Widget.MaterialComponents.Button"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

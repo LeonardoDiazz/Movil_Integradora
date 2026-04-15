@@ -9,43 +9,34 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="8dp"
         android:background="@color/white">
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:text="Reservas"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Reservas"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Control de solicitudes de espacios físicos y equipamiento institucional."
+            android:textSize="13sp"
+            android:textColor="@color/gray_text"
+            android:layout_marginTop="2dp"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Control de solicitudes de espacios físicos y equipamiento institucional."
-                android:textSize="13sp"
-                android:textColor="@color/gray_text"
-                android:layout_marginTop="2dp"/>
-        </LinearLayout>
-
+        <!-- botón oculto para mantener el binding sin errores -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddReservation"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="+ Nueva"
-            android:textSize="12sp"
-            android:backgroundTint="@color/green_primary"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
             style="@style/Widget.MaterialComponents.Button"/>
 
     </LinearLayout>

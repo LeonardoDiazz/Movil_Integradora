@@ -22,10 +22,10 @@ class AuditFragment : Fragment() {
     private var currentPage = 0
     private var totalPages = 1
 
-    private val tipoLabels = arrayOf("Todos los Tipos", "Espacio", "Equipo")
+    private val tipoLabels = arrayOf("Todos", "Espacio", "Equipo")
     private val tipoValues = arrayOf("", "SPACE", "EQUIPMENT")
 
-    private val estatusLabels = arrayOf("Todos los Estatus", "Aprobada", "Rechazada", "Cancelada")
+    private val estatusLabels = arrayOf("Todos", "Aprobada", "Rechazada", "Cancelada")
     private val estatusValues = arrayOf("", "APROBADA", "RECHAZADA", "CANCELADA")
 
     private var filterTipo = ""
@@ -112,7 +112,7 @@ class AuditFragment : Fragment() {
 
     private fun showAuditDetailDialog(r: Reservation) {
         val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_reservation_detail, null)
-        val resourceName = if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
+        val resourceName = r.resourceName ?: if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
         val resourceTypeLabel = if (r.resourceType == "SPACE") "Espacio" else "Equipo"
         val statusLabel = when (r.status) {
             "PENDIENTE" -> "Pendiente"
@@ -123,19 +123,15 @@ class AuditFragment : Fragment() {
             else -> r.status ?: "—"
         }
 
-        view.findViewById<TextView>(R.id.tvDRequester).text = r.requesterName ?: "—"
-        view.findViewById<TextView>(R.id.tvDEmail).text = r.requesterEmail ?: "—"
-        view.findViewById<TextView>(R.id.tvDRequesterType).text = "—"
-        view.findViewById<TextView>(R.id.tvDResourceType).text = resourceTypeLabel
+        view.findViewById<TextView>(R.id.tvDId).text = "${r.id}"
+        view.findViewById<TextView>(R.id.tvDStatus).text = statusLabel
         view.findViewById<TextView>(R.id.tvDResource).text = resourceName
+        view.findViewById<TextView>(R.id.tvDResourceType).text = resourceTypeLabel
         view.findViewById<TextView>(R.id.tvDDate).text = r.reservationDate ?: "—"
         view.findViewById<TextView>(R.id.tvDStartTime).text = r.startTime ?: "—"
-        view.findViewById<TextView>(R.id.tvDReturnDate).text = r.createdAt?.take(10) ?: "—"
+        view.findViewById<TextView>(R.id.tvDReturnDate).text = r.endDate ?: r.reservationDate ?: "—"
         view.findViewById<TextView>(R.id.tvDEndTime).text = r.endTime ?: "—"
-        view.findViewById<TextView>(R.id.tvDStatus).text = statusLabel
         view.findViewById<TextView>(R.id.tvDPurpose).text = r.purpose ?: "—"
-        view.findViewById<TextView>(R.id.tvDObservations).text = r.observations ?: "—"
-        view.findViewById<TextView>(R.id.tvDAdminComment).text = r.adminComment ?: "—"
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(view)
@@ -164,17 +160,25 @@ class AuditAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val r = items[position]
         holder.view.apply {
-            val resourceName = if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
+            val resourceName = r.resourceName ?: if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
             findViewById<TextView>(R.id.tvResourceName).text = resourceName
 
             findViewById<TextView>(R.id.tvRequesterName).text = r.requesterName ?: r.requesterEmail ?: "—"
 
-            val categoryLabel = if (r.resourceType == "SPACE") "Espacio" else "Equipo"
-            findViewById<TextView>(R.id.tvCategory).text = categoryLabel
+            val tvCategory = findViewById<TextView>(R.id.tvCategory)
+            if (r.resourceType == "SPACE") {
+                tvCategory.text = "🏢 Espacio"
+                tvCategory.setBackgroundResource(R.drawable.bg_chip_category)
+                tvCategory.setTextColor(0xFF7C3AED.toInt())
+            } else {
+                tvCategory.text = "📦 Equipo"
+                tvCategory.setBackgroundResource(R.drawable.bg_chip_orange)
+                tvCategory.setTextColor(0xFFEA580C.toInt())
+            }
 
             findViewById<TextView>(R.id.tvAuditDate).text = r.reservationDate
 
-            val schedule = if (!r.startTime.isNullOrBlank() && !r.endTime.isNullOrBlank())
+            val schedule = r.schedule ?: if (!r.startTime.isNullOrBlank() && !r.endTime.isNullOrBlank())
                 "${r.startTime} - ${r.endTime}" else "—"
             findViewById<TextView>(R.id.tvAuditSchedule).text = schedule
 
@@ -188,18 +192,15 @@ class AuditAdapter(
                 else -> r.status
             }
             tvStatus.text = statusLabel
-            val statusColor = when (r.status ?: "") {
-                "PENDIENTE" -> 0xFFF59E0B.toInt()
-                "APROBADA" -> 0xFF10B981.toInt()
-                "RECHAZADA" -> 0xFFEF4444.toInt()
-                "CANCELADA" -> 0xFF6B7280.toInt()
-                "DEVUELTA" -> 0xFF3B82F6.toInt()
-                else -> 0xFF6B7280.toInt()
+            when (r.status ?: "") {
+                "PENDIENTE" -> { tvStatus.setBackgroundResource(R.drawable.bg_badge_yellow); tvStatus.setTextColor(0xFF92400E.toInt()) }
+                "APROBADA"  -> { tvStatus.setBackgroundResource(R.drawable.bg_badge_green);  tvStatus.setTextColor(0xFF065F46.toInt()) }
+                "RECHAZADA" -> { tvStatus.setBackgroundResource(R.drawable.bg_badge_red);    tvStatus.setTextColor(0xFF991B1B.toInt()) }
+                "DEVUELTA"  -> { tvStatus.setBackgroundResource(R.drawable.bg_badge_blue);   tvStatus.setTextColor(0xFF1D4ED8.toInt()) }
+                else        -> { tvStatus.setBackgroundResource(R.drawable.bg_badge_gray);   tvStatus.setTextColor(0xFF6B7280.toInt()) }
             }
-            tvStatus.setBackgroundColor(statusColor)
 
-            findViewById<com.google.android.material.button.MaterialButton>(R.id.btnAuditViewDetail)
-                .setOnClickListener { onViewDetail(r) }
+            setOnClickListener { onViewDetail(r) }
         }
     }
 }

@@ -293,27 +293,34 @@ class SpacesFragment : Fragment() {
                 val selectedAvail = availValues[availLabels.indexOfFirst { it == actvAvail.text.toString() }.coerceAtLeast(0)]
                 val isActive = actvStatus.text.toString() == "Activo"
 
-                lifecycleScope.launch {
-                    try {
-                        val req = CreateSpaceRequest(
-                            name          = name,
-                            category      = selectedCat,
-                            location      = location,
-                            capacity      = capacity,
-                            description   = desc,
-                            allowStudents = cbStudents.isChecked,
-                            availability  = selectedAvail,
-                            active        = isActive
-                        )
-                        val resp = RetrofitClient.create(ctx).updateSpace(space.id, req)
-                        if (resp.isSuccessful) {
-                            Toast.makeText(ctx, "Espacio actualizado", Toast.LENGTH_SHORT).show()
-                            dialog.dismiss(); load()
-                        } else Toast.makeText(ctx, "Error: ${resp.code()}", Toast.LENGTH_SHORT).show()
-                    } catch (_: Exception) {
-                        Toast.makeText(ctx, "Error de conexión", Toast.LENGTH_SHORT).show()
+                AlertDialog.Builder(ctx)
+                    .setTitle("¿Guardar cambios?")
+                    .setMessage("Se actualizarán los datos del espacio. ¿Deseas continuar?")
+                    .setPositiveButton("Sí, guardar") { _, _ ->
+                        lifecycleScope.launch {
+                            try {
+                                val req = CreateSpaceRequest(
+                                    name          = name,
+                                    category      = selectedCat,
+                                    location      = location,
+                                    capacity      = capacity,
+                                    description   = desc,
+                                    allowStudents = cbStudents.isChecked,
+                                    availability  = selectedAvail,
+                                    active        = isActive
+                                )
+                                val resp = RetrofitClient.create(ctx).updateSpace(space.id, req)
+                                if (resp.isSuccessful) {
+                                    Toast.makeText(ctx, "Espacio actualizado", Toast.LENGTH_SHORT).show()
+                                    dialog.dismiss(); load()
+                                } else Toast.makeText(ctx, "Error: ${resp.code()}", Toast.LENGTH_SHORT).show()
+                            } catch (_: Exception) {
+                                Toast.makeText(ctx, "Error de conexión", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
-                }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
             }
 
         dialog.show()

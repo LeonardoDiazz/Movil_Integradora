@@ -102,7 +102,7 @@ class NewRequestFragment : Fragment() {
 
     private fun showDatePicker(onSelected: (String) -> Unit) {
         val cal = Calendar.getInstance()
-        DatePickerDialog(
+        val picker = DatePickerDialog(
             requireContext(),
             { _, year, month, day ->
                 onSelected(String.format("%04d-%02d-%02d", year, month + 1, day))
@@ -110,7 +110,9 @@ class NewRequestFragment : Fragment() {
             cal.get(Calendar.YEAR),
             cal.get(Calendar.MONTH),
             cal.get(Calendar.DAY_OF_MONTH)
-        ).show()
+        )
+        picker.datePicker.minDate = System.currentTimeMillis()
+        picker.show()
     }
 
     private fun showTimePicker(onSelected: (String) -> Unit, maxHour: Int = 22) {
@@ -273,6 +275,23 @@ class NewRequestFragment : Fragment() {
         if (endH < 7 || endH > 21 || (endH == 21 && endM > 0)) {
             binding.tilEndTime.error = "Horario: 07:00 – 21:00"; return
         } else { binding.tilEndTime.error = null }
+
+        // Validar que la fecha/hora de inicio no sea en el pasado
+        try {
+            val now = Calendar.getInstance()
+            val startCal = Calendar.getInstance()
+            val dateParts = startDate.split("-")
+            val timeParts = startTime.split(":")
+            startCal.set(
+                dateParts[0].toInt(), dateParts[1].toInt() - 1, dateParts[2].toInt(),
+                timeParts[0].toInt(), timeParts[1].toInt(), 0
+            )
+            startCal.set(Calendar.MILLISECOND, 0)
+            if (startCal.before(now)) {
+                binding.tilDate.error = "No puedes reservar en una fecha u hora pasada"
+                return
+            } else { binding.tilDate.error = null }
+        } catch (_: Exception) { }
 
         val session = SessionManager(requireContext())
         binding.btnSubmit.isEnabled = false

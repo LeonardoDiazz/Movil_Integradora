@@ -236,38 +236,45 @@ class UsersFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            lifecycleScope.launch {
-                try {
-                    val api = RetrofitClient.create(ctx)
-                    val resp = if (isCreate) {
-                        val req = CreateUserRequest(
-                            name = name, lastName = lastName, email = email,
-                            identifier = identifier,
-                            password = password,
-                            role = selectedRole, active = true,
-                            userType = selectedType,
-                            birthDate = birthDate,
-                            phone = phone
-                        )
-                        api.createUser(req)
-                    } else {
-                        val req = UpdateUserRequest(
-                            name = name, lastName = lastName, email = email,
-                            identifier = identifier,
-                            password = password.ifEmpty { null },
-                            role = selectedRole, active = user!!.active ?: true,
-                            userType = selectedType,
-                            birthDate = birthDate,
-                            phone = phone
-                        )
-                        api.updateUser(user.id, req)
+            AlertDialog.Builder(ctx)
+                .setTitle(if (isCreate) "¿Registrar usuario?" else "¿Guardar cambios?")
+                .setMessage(if (isCreate) "Se creará un nuevo usuario. ¿Deseas continuar?" else "Se actualizarán los datos del usuario. ¿Deseas continuar?")
+                .setPositiveButton(if (isCreate) "Sí, registrar" else "Sí, guardar") { _, _ ->
+                    lifecycleScope.launch {
+                        try {
+                            val api = RetrofitClient.create(ctx)
+                            val resp = if (isCreate) {
+                                val req = CreateUserRequest(
+                                    name = name, lastName = lastName, email = email,
+                                    identifier = identifier,
+                                    password = password,
+                                    role = selectedRole, active = true,
+                                    userType = selectedType,
+                                    birthDate = birthDate,
+                                    phone = phone
+                                )
+                                api.createUser(req)
+                            } else {
+                                val req = UpdateUserRequest(
+                                    name = name, lastName = lastName, email = email,
+                                    identifier = identifier,
+                                    password = password.ifEmpty { null },
+                                    role = selectedRole, active = user!!.active ?: true,
+                                    userType = selectedType,
+                                    birthDate = birthDate,
+                                    phone = phone
+                                )
+                                api.updateUser(user.id, req)
+                            }
+                            if (resp.isSuccessful) {
+                                Toast.makeText(ctx, if (isCreate) "Usuario creado" else "Usuario actualizado", Toast.LENGTH_SHORT).show()
+                                dialog.dismiss(); load()
+                            } else Toast.makeText(ctx, "Error: ${resp.code()}", Toast.LENGTH_SHORT).show()
+                        } catch (_: Exception) { Toast.makeText(ctx, "Error de conexión", Toast.LENGTH_SHORT).show() }
                     }
-                    if (resp.isSuccessful) {
-                        Toast.makeText(ctx, if (isCreate) "Usuario creado" else "Usuario actualizado", Toast.LENGTH_SHORT).show()
-                        dialog.dismiss(); load()
-                    } else Toast.makeText(ctx, "Error: ${resp.code()}", Toast.LENGTH_SHORT).show()
-                } catch (_: Exception) { Toast.makeText(ctx, "Error de conexión", Toast.LENGTH_SHORT).show() }
-            }
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
 
         dialog.show()

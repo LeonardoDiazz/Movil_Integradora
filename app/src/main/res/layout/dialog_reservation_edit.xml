@@ -110,7 +110,34 @@
             android:hint="Motivo de la solicitud" android:minLines="3"
             android:gravity="top" android:inputType="textMultiLine"
             android:background="@drawable/bg_detail_card" android:padding="10dp"
-            android:textSize="13sp" android:textColor="#111827"/>
+            android:textSize="13sp" android:textColor="#111827"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Botones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancelar"
+                android:textColor="@color/gray_text"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Guardar Cambios"
+                android:backgroundTint="@color/green_primary"
+                android:layout_marginStart="8dp"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

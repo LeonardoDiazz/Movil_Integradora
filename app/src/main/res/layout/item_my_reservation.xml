@@ -23,15 +23,6 @@
             android:gravity="center_vertical"
             android:layout_marginBottom="8dp">
 
-            <TextView
-                android:id="@+id/tvId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="#1"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="#6B7280"
-                android:layout_marginEnd="8dp"/>
 
             <TextView
                 android:id="@+id/tvResourceName"
@@ -56,7 +47,7 @@
                 android:textColor="#92400E"/>
         </LinearLayout>
 
-        <!-- Fila 2: TIPO | FECHA INICIO | HORARIO -->
+        <!-- Fila 2: TIPO | FECHA INICIO | FECHA FIN | HORARIO -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,6 +76,19 @@
                     android:text="FECHA INICIO" android:textSize="9sp" android:textStyle="bold"
                     android:textColor="#9CA3AF" android:layout_marginBottom="2dp"/>
                 <TextView android:id="@+id/tvDate"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="—" android:textSize="13sp" android:textColor="#374151"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="FECHA FIN" android:textSize="9sp" android:textStyle="bold"
+                    android:textColor="#9CA3AF" android:layout_marginBottom="2dp"/>
+                <TextView android:id="@+id/tvEndDate"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="—" android:textSize="13sp" android:textColor="#374151"/>
             </LinearLayout>

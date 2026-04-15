@@ -115,13 +115,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:hintEnabled="false"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                app:boxStrokeColor="#E5E7EB"
+                app:boxBackgroundColor="@color/white"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Buscar espacio..."
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:textSize="14sp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Student notice -->
@@ -281,50 +286,6 @@
                     style="@style/Widget.MaterialComponents.Button"/>
             </LinearLayout>
 
-            <!-- Equipos en este espacio (solo para SPACE) -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardSpaceEquipment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:visibility="gone"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🔶 Equipos en este espacio"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"
-                        android:layout_marginBottom="10dp"/>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvSpaceEquipment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"/>
-
-                    <TextView
-                        android:id="@+id/tvNoEquipment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Sin equipos asociados a este espacio."
-                        android:textSize="13sp"
-                        android:textColor="@color/gray_text"
-                        android:gravity="center"
-                        android:padding="12dp"
-                        android:visibility="gone"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
             <!-- Form card -->
             <androidx.cardview.widget.CardView
@@ -346,7 +307,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="16dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -360,20 +321,25 @@
                                 android:layout_height="wrap_content"
                                 android:text="📅 Fecha de inicio"
                                 android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/text_primary"
+                                android:textColor="@color/gray_text"
                                 android:layout_marginBottom="6dp"/>
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilDate"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                app:errorEnabled="true"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etDate"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:hint="YYYY-MM-DD"
-                                    android:inputType="date"/>
+                                    android:layout_height="56dp"
+                                    android:hint="dd/mm/aaaa"
+                                    android:focusable="false"
+                                    android:clickable="true"
+                                    android:inputType="none"
+                                    android:cursorVisible="false"
+                                    android:gravity="center_vertical"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
 
@@ -388,20 +354,25 @@
                                 android:layout_height="wrap_content"
                                 android:text="🕐 Hora de inicio"
                                 android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/text_primary"
+                                android:textColor="@color/gray_text"
                                 android:layout_marginBottom="6dp"/>
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilStartTime"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                app:errorEnabled="true"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etStartTime"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="56dp"
                                     android:hint="--:--"
-                                    android:inputType="time"/>
+                                    android:focusable="false"
+                                    android:clickable="true"
+                                    android:inputType="none"
+                                    android:cursorVisible="false"
+                                    android:gravity="center_vertical"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -411,7 +382,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginBottom="16dp">
+                        android:layout_marginBottom="20dp">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -425,20 +396,25 @@
                                 android:layout_height="wrap_content"
                                 android:text="📅 Fecha de devolución"
                                 android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/text_primary"
+                                android:textColor="@color/gray_text"
                                 android:layout_marginBottom="6dp"/>
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilEndDate"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                app:errorEnabled="true"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etEndDate"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:hint="YYYY-MM-DD"
-                                    android:inputType="date"/>
+                                    android:layout_height="56dp"
+                                    android:hint="dd/mm/aaaa"
+                                    android:focusable="false"
+                                    android:clickable="true"
+                                    android:inputType="none"
+                                    android:cursorVisible="false"
+                                    android:gravity="center_vertical"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
 
@@ -453,20 +429,25 @@
                                 android:layout_height="wrap_content"
                                 android:text="🕐 Hora de devolución"
                                 android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/text_primary"
+                                android:textColor="@color/gray_text"
                                 android:layout_marginBottom="6dp"/>
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilEndTime"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                app:errorEnabled="true"
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etEndTime"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="56dp"
                                     android:hint="--:--"
-                                    android:inputType="time"/>
+                                    android:focusable="false"
+                                    android:clickable="true"
+                                    android:inputType="none"
+                                    android:cursorVisible="false"
+                                    android:gravity="center_vertical"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -478,52 +459,42 @@
                         android:text="Motivo de la solicitud"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:textColor="@color/text_primary"
-                        android:layout_marginBottom="6dp"/>
+                        android:textColor="@color/blue_dark"
+                        android:layout_marginBottom="8dp"/>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPurpose"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="8dp"
                         app:counterEnabled="true"
                         app:counterMaxLength="500"
+                        app:errorEnabled="true"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPurpose"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Describe brevemente la actividad o uso que le darás al recurso..."
+                            android:hint="Describe brevemente la actividad"
                             android:inputType="textMultiLine"
-                            android:minLines="4"
-                            android:maxLength="500"/>
+                            android:minLines="5"
+                            android:maxLength="500"
+                            android:gravity="top|start"
+                            android:paddingTop="12dp"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Nota importante -->
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tvImportantNote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:background="@drawable/bg_warning"
                         android:padding="12dp"
-                        android:layout_marginTop="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Nota importante: "
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:textColor="#92400E"/>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Todas las solicitudes se registran en estado Pendiente y no podrán ser editadas una vez aprobadas o rechazadas."
-                            android:textSize="12sp"
-                            android:textColor="#92400E"
-                            android:lineSpacingExtra="2dp"/>
-                    </LinearLayout>
+                        android:layout_marginTop="8dp"
+                        android:text="Nota importante: Todas las solicitudes se registran en estado Pendiente y no podrán ser editadas una vez aprobadas o rechazadas."
+                        android:textSize="12sp"
+                        android:textColor="#92400E"
+                        android:lineSpacingExtra="2dp"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

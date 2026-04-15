@@ -35,75 +35,33 @@
     </LinearLayout>
 
     <!-- Filtros -->
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="2dp"
-        app:cardBackgroundColor="@color/white">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="14dp">
+        <Spinner
+            android:id="@+id/spinnerStatus"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_spinner"
+            android:layout_marginEnd="8dp"/>
 
-            <!-- Estatus -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ESTATUS DE SOLICITUD"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textColor="@color/gray_text"
-                android:layout_marginBottom="6dp"/>
+        <ImageButton
+            android:id="@+id/btnReset"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_btn_outline"
+            android:src="@drawable/ic_menu_audit"
+            android:contentDescription="Refrescar"
+            android:padding="10dp"/>
 
-            <Spinner
-                android:id="@+id/spinnerStatus"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_spinner"
-                android:layout_marginBottom="12dp"/>
-
-            <!-- Disponibilidad -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DISPONIBILIDAD"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textColor="@color/gray_text"
-                android:layout_marginBottom="6dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Spinner
-                    android:id="@+id/spinnerType"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_spinner"
-                    android:layout_marginEnd="8dp"/>
-
-                <ImageButton
-                    android:id="@+id/btnReset"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_btn_outline"
-                    android:src="@drawable/ic_menu_audit"
-                    android:contentDescription="Reset"
-                    android:padding="10dp"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
     <!-- Tabla / Lista -->
     <androidx.cardview.widget.CardView
@@ -202,17 +160,26 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Banner info -->
-    <TextView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/blue_dark"
-        android:text="Gestión de Solicitudes: Puedes modificar o cancelar mientras estén en Pendiente. Una vez aprobadas, rechazadas o devueltas, se deshabilitan."
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        android:padding="16dp"
-        android:lineSpacingMultiplier="1.4"/>
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/blue_dark">
+
+        <TextView
+            android:id="@+id/tvInfoBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gestión de Solicitudes: Puedes modificar o cancelar mientras estén en Pendiente. Una vez aprobadas, rechazadas o devueltas, se deshabilitan."
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:padding="16dp"
+            android:lineSpacingMultiplier="1.4"/>
+
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

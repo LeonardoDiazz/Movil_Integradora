@@ -311,27 +311,34 @@ class EquipmentFragment : Fragment() {
                 val selectedSpaceName = actvSpace.text.toString()
                 val spaceId = spacesList.find { it.name == selectedSpaceName }?.id
 
-                lifecycleScope.launch {
-                    try {
-                        val req = UpdateEquipmentRequest(
-                            inventoryNumber = inv,
-                            name            = name,
-                            category        = selectedCat,
-                            description     = desc,
-                            allowStudents   = cbStudents.isChecked,
-                            condition       = currentCondition,
-                            active          = eqPreview.active ?: true,
-                            spaceId         = spaceId
-                        )
-                        val resp = RetrofitClient.create(ctx).updateEquipment(eqPreview.id, req)
-                        if (resp.isSuccessful) {
-                            Toast.makeText(ctx, "Equipo actualizado", Toast.LENGTH_SHORT).show()
-                            dialog.dismiss(); load()
-                        } else Toast.makeText(ctx, "Error: ${resp.code()}", Toast.LENGTH_SHORT).show()
-                    } catch (_: Exception) {
-                        Toast.makeText(ctx, "Error de conexión", Toast.LENGTH_SHORT).show()
+                AlertDialog.Builder(ctx)
+                    .setTitle("¿Guardar cambios?")
+                    .setMessage("Se actualizarán los datos del equipo. ¿Deseas continuar?")
+                    .setPositiveButton("Sí, guardar") { _, _ ->
+                        lifecycleScope.launch {
+                            try {
+                                val req = UpdateEquipmentRequest(
+                                    inventoryNumber = inv,
+                                    name            = name,
+                                    category        = selectedCat,
+                                    description     = desc,
+                                    allowStudents   = cbStudents.isChecked,
+                                    condition       = currentCondition,
+                                    active          = eqPreview.active ?: true,
+                                    spaceId         = spaceId
+                                )
+                                val resp = RetrofitClient.create(ctx).updateEquipment(eqPreview.id, req)
+                                if (resp.isSuccessful) {
+                                    Toast.makeText(ctx, "Equipo actualizado", Toast.LENGTH_SHORT).show()
+                                    dialog.dismiss(); load()
+                                } else Toast.makeText(ctx, "Error: ${resp.code()}", Toast.LENGTH_SHORT).show()
+                            } catch (_: Exception) {
+                                Toast.makeText(ctx, "Error de conexión", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
-                }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
             }
 
         dialog.show()

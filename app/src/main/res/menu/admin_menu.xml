@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/nav_users" android:title="Usuarios" android:icon="@drawable/ic_menu_users"/>
     <item android:id="@+id/nav_spaces" android:title="Espacios" android:icon="@drawable/ic_menu_spaces"/>
-    <item android:id="@+id/nav_equipment" android:title="Inventario" android:icon="@drawable/ic_menu_inventory"/>
+    <item android:id="@+id/nav_equipment" android:title="Equipo" android:icon="@drawable/ic_menu_inventory"/>
     <item android:id="@+id/nav_reservations" android:title="Reservaciones" android:icon="@drawable/ic_menu_reservations"/>
     <item android:id="@+id/nav_audit" android:title="Auditoría" android:icon="@drawable/ic_menu_audit"/>
     <item android:id="@+id/nav_profile" android:title="Perfil" android:icon="@drawable/ic_menu_profile"/>

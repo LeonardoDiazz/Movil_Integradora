@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -134,10 +135,10 @@ class ReservationsFragment : Fragment() {
                         val req = CreateReservationRequest(
                             requesterId = requesterId,
                             resourceType = selectedType,
-                            spaceId = if (selectedType == "SPACE") resourceId else null,
-                            equipmentId = if (selectedType == "EQUIPMENT") resourceId else null,
+                            resourceId = resourceId,
                             reservationDate = date,
                             startTime = start,
+                            endDate = null,
                             endTime = end,
                             purpose = purpose,
                             observations = etObs.text.toString().trim().ifEmpty { null }
@@ -154,30 +155,72 @@ class ReservationsFragment : Fragment() {
 
     private fun showViewReservationDialog(r: Reservation) {
         val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_reservation_detail, null)
-        val resourceName = if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
-        val resourceTypeLabel = if (r.resourceType == "SPACE") "Espacio" else "Equipo"
-        val statusLabel = when (r.status) {
-            "PENDIENTE" -> "Pendiente"
-            "APROBADA" -> "Aprobada"
-            "RECHAZADA" -> "Rechazada"
-            "DEVUELTA" -> "Devuelta"
-            "CANCELADA" -> "Cancelada"
-            else -> r.status ?: "—"
+
+        fun fillDialog(res: Reservation) {
+            val resourceName = res.resourceName
+                ?: if (res.resourceType == "SPACE") res.spaceName ?: "—" else res.equipmentName ?: "—"
+            val resourceTypeLabel = if (res.resourceType == "SPACE") "Espacio" else "Equipo"
+            val statusLabel = when (res.status) {
+                "PENDIENTE" -> "Pendiente"
+                "APROBADA"  -> "Aprobada"
+                "RECHAZADA" -> "Rechazada"
+                "DEVUELTA"  -> "Devuelta"
+                "CANCELADA" -> "Cancelada"
+                else        -> res.status ?: "—"
+            }
+            val requesterTypeLabel = when (res.requesterType) {
+                "ESTUDIANTE" -> "Estudiante"
+                "STAFF"      -> "Personal"
+                else         -> res.requesterType ?: "—"
+            }
+
+            // Solicitante
+            view.findViewById<TextView>(R.id.tvDRequester).text     = res.requesterName ?: "—"
+            view.findViewById<TextView>(R.id.tvDEmail).text         = res.requesterEmail ?: "—"
+            view.findViewById<TextView>(R.id.tvDRequesterType).text = requesterTypeLabel
+
+            // Reserva
+            view.findViewById<TextView>(R.id.tvDResourceType).text  = resourceTypeLabel
+            view.findViewById<TextView>(R.id.tvDResource).text      = resourceName
+            view.findViewById<TextView>(R.id.tvDDate).text          = res.reservationDate ?: "—"
+            view.findViewById<TextView>(R.id.tvDStartTime).text     = res.startTime ?: "—"
+            view.findViewById<TextView>(R.id.tvDReturnDate).text    = res.endDate ?: res.reservationDate ?: "—"
+            view.findViewById<TextView>(R.id.tvDEndTime).text       = res.endTime ?: "—"
+            view.findViewById<TextView>(R.id.tvDStatus).text        = statusLabel
+
+            // Notas
+            view.findViewById<TextView>(R.id.tvDPurpose).text      = res.purpose?.ifBlank { "—" } ?: "—"
+            view.findViewById<TextView>(R.id.tvDObservations).text = res.observations?.ifBlank { "—" } ?: "—"
+
+            // Comentario del admin — mostrar sección solo si hay dato
+            val adminComment = res.adminComment
+            val sectionAdmin = view.findViewById<LinearLayout>(R.id.sectionAdminComment)
+            if (!adminComment.isNullOrBlank()) {
+                sectionAdmin.visibility = View.VISIBLE
+                view.findViewById<TextView>(R.id.tvDAdminComment).text = adminComment
+            } else {
+                sectionAdmin.visibility = View.GONE
+            }
+
+            // Sección devolución — mostrar solo si fue devuelta
+            val sectionReturn = view.findViewById<LinearLayout>(R.id.sectionReturn)
+            if (!res.returnCondition.isNullOrBlank() || !res.returnedAt.isNullOrBlank()) {
+                sectionReturn.visibility = View.VISIBLE
+                val condLabel = when (res.returnCondition) {
+                    "BUEN_ESTADO" -> "Buen estado"
+                    "DAÑADO"      -> "Dañado"
+                    else          -> res.returnCondition ?: "—"
+                }
+                view.findViewById<TextView>(R.id.tvDReturnCondition).text   = condLabel
+                view.findViewById<TextView>(R.id.tvDReturnedAt).text        = res.returnedAt ?: "—"
+                view.findViewById<TextView>(R.id.tvDReturnDescription).text = res.returnDescription?.ifBlank { "—" } ?: "—"
+            } else {
+                sectionReturn.visibility = View.GONE
+            }
         }
 
-        view.findViewById<TextView>(R.id.tvDRequester).text = r.requesterName ?: "—"
-        view.findViewById<TextView>(R.id.tvDEmail).text = r.requesterEmail ?: "—"
-        view.findViewById<TextView>(R.id.tvDRequesterType).text = "—"
-        view.findViewById<TextView>(R.id.tvDResourceType).text = resourceTypeLabel
-        view.findViewById<TextView>(R.id.tvDResource).text = resourceName
-        view.findViewById<TextView>(R.id.tvDDate).text = r.reservationDate ?: "—"
-        view.findViewById<TextView>(R.id.tvDStartTime).text = r.startTime ?: "—"
-        view.findViewById<TextView>(R.id.tvDReturnDate).text = r.createdAt?.take(10) ?: "—"
-        view.findViewById<TextView>(R.id.tvDEndTime).text = r.endTime ?: "—"
-        view.findViewById<TextView>(R.id.tvDStatus).text = statusLabel
-        view.findViewById<TextView>(R.id.tvDPurpose).text = r.purpose ?: "—"
-        view.findViewById<TextView>(R.id.tvDObservations).text = r.observations ?: "—"
-        view.findViewById<TextView>(R.id.tvDAdminComment).text = r.adminComment ?: "—"
+        // Mostrar datos del listado de inmediato (parciales)
+        fillDialog(r)
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(view)
@@ -188,6 +231,16 @@ class ReservationsFragment : Fragment() {
             .setOnClickListener { dialog.dismiss() }
 
         dialog.show()
+
+        // Cargar datos completos desde el endpoint de detalle
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.create(requireContext()).getReservation(r.id)
+                if (response.isSuccessful && dialog.isShowing) {
+                    response.body()?.let { fillDialog(it) }
+                }
+            } catch (_: Exception) { }
+        }
     }
 
     private fun setupSpinner(spinner: Spinner, labels: Array<String>, onSelect: (Int) -> Unit) {
@@ -210,7 +263,7 @@ class ReservationsFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val api = RetrofitClient.create(requireContext())
-                val response = api.getReservations(currentPage, 10, backendFilter)
+                val response = api.getReservations(currentPage, 4, backendFilter)
                 if (response.isSuccessful) {
                     val page = response.body() ?: return@launch
                     totalPages = page.totalPages.coerceAtLeast(1)
@@ -277,41 +330,91 @@ class ReservationsFragment : Fragment() {
     }
 
     private fun showReturnDialog(r: Reservation) {
-        val conditions = arrayOf("BUEN_ESTADO", "DAÑADO")
-        var selectedCondition = "BUEN_ESTADO"
-        val layout = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(48, 16, 48, 0)
-        }
-        val spinnerCondition = Spinner(requireContext()).apply {
-            adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, conditions).apply {
-                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            }
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) { selectedCondition = conditions[pos] }
-                override fun onNothingSelected(p: AdapterView<*>?) {}
-            }
-        }
-        val inputDesc = EditText(requireContext()).apply { hint = "Descripción (opcional)" }
-        layout.addView(spinnerCondition)
-        layout.addView(inputDesc)
+        val ctx = requireContext()
+        val view = LayoutInflater.from(ctx).inflate(R.layout.dialog_return_form, null)
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Registrar devolución")
-            .setView(layout)
-            .setPositiveButton("Registrar") { _, _ ->
+        // Info
+        view.findViewById<TextView>(R.id.tvReturnRequester).text = r.requesterName ?: "—"
+        val resourceName = r.resourceName
+            ?: if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
+        view.findViewById<TextView>(R.id.tvReturnResource).text = resourceName
+
+        // Opciones de condición
+        val optBuenEstado   = view.findViewById<LinearLayout>(R.id.optBuenEstado)
+        val optDanado       = view.findViewById<LinearLayout>(R.id.optDanado)
+        val tvBuenEstado    = view.findViewById<TextView>(R.id.tvBuenEstado)
+        val tvDanado        = view.findViewById<TextView>(R.id.tvDanado)
+        val ivBuenEstado    = view.findViewById<TextView>(R.id.ivBuenEstado)
+        val sectionDamage   = view.findViewById<LinearLayout>(R.id.sectionDamageDesc)
+        val etDamageDesc    = view.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etDamageDesc)
+        val tvCondError     = view.findViewById<TextView>(R.id.tvReturnConditionError)
+        val tvDescError     = view.findViewById<TextView>(R.id.tvDamageDescError)
+
+        var selectedCondition = ""
+
+        fun selectCondition(condition: String) {
+            selectedCondition = condition
+            tvCondError.visibility = View.GONE
+            if (condition == "BUEN_ESTADO") {
+                optBuenEstado.setBackgroundResource(R.drawable.bg_card_selected)
+                tvBuenEstado.setTextColor(0xFF15803D.toInt())
+                ivBuenEstado.setTextColor(0xFF15803D.toInt())
+                optDanado.setBackgroundResource(R.drawable.bg_card_selectable)
+                tvDanado.setTextColor(0xFF334155.toInt())
+                sectionDamage.visibility = View.GONE
+            } else {
+                optDanado.setBackgroundResource(R.drawable.bg_card_selected)
+                tvDanado.setTextColor(0xFF15803D.toInt())
+                optBuenEstado.setBackgroundResource(R.drawable.bg_card_selectable)
+                tvBuenEstado.setTextColor(0xFF334155.toInt())
+                ivBuenEstado.setTextColor(0xFF9CA3AF.toInt())
+                sectionDamage.visibility = View.VISIBLE
+            }
+        }
+
+        optBuenEstado.setOnClickListener { selectCondition("BUEN_ESTADO") }
+        optDanado.setOnClickListener     { selectCondition("DAÑADO") }
+
+        val dialog = AlertDialog.Builder(ctx)
+            .setView(view)
+            .create()
+
+        view.findViewById<TextView>(R.id.btnReturnClose).setOnClickListener  { dialog.dismiss() }
+        view.findViewById<TextView>(R.id.btnReturnCancel).setOnClickListener { dialog.dismiss() }
+
+        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnReturnConfirm)
+            .setOnClickListener {
+                // Validaciones
+                if (selectedCondition.isEmpty()) {
+                    tvCondError.visibility = View.VISIBLE
+                    return@setOnClickListener
+                }
+                if (selectedCondition == "DAÑADO") {
+                    val desc = etDamageDesc.text.toString().trim()
+                    if (desc.length < 10) {
+                        tvDescError.visibility = View.VISIBLE
+                        return@setOnClickListener
+                    }
+                }
+                tvDescError.visibility = View.GONE
+
                 lifecycleScope.launch {
                     try {
-                        RetrofitClient.create(requireContext()).returnReservation(
-                            r.id, ReturnRequest(selectedCondition, inputDesc.text.toString().ifBlank { null })
+                        val desc = if (selectedCondition == "DAÑADO")
+                            etDamageDesc.text.toString().trim() else null
+                        RetrofitClient.create(ctx).returnReservation(
+                            r.id, ReturnRequest(selectedCondition, desc)
                         )
-                        Toast.makeText(requireContext(), "Devolución registrada", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(ctx, "Devolución registrada", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
                         load()
-                    } catch (_: Exception) {}
+                    } catch (_: Exception) {
+                        Toast.makeText(ctx, "Error de conexión", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-            .setNegativeButton("Cancelar", null)
-            .show()
+
+        dialog.show()
     }
 
     override fun onDestroyView() { super.onDestroyView(); _binding = null }
@@ -334,9 +437,11 @@ class ReservationAdapter(
         holder.view.apply {
             // Solicitante + recurso
             findViewById<TextView>(R.id.tvRequester).text = r.requesterName ?: r.requesterEmail ?: "—"
-            val resourceName = if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
+            val resourceName = r.resourceName ?: if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
             findViewById<TextView>(R.id.tvResourceName).text = resourceName
-            findViewById<TextView>(R.id.tvDate).text = "${r.reservationDate ?: "—"}  ${r.startTime ?: ""} – ${r.endTime ?: ""}"
+            findViewById<TextView>(R.id.tvDate).text = r.reservationDate ?: "—"
+            val timeText = r.schedule ?: "${r.startTime ?: ""}  –  ${r.endTime ?: ""}".trim()
+            findViewById<TextView>(R.id.tvTime).text = timeText
 
             // Badge categoría
             val tvCategory = findViewById<TextView>(R.id.tvCategory)
