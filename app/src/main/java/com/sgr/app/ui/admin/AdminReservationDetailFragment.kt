@@ -1,22 +1,24 @@
 package com.sgr.app.ui.admin
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.sgr.app.R
 import com.sgr.app.model.Reservation
 import com.sgr.app.network.RetrofitClient
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-class AdminReservationDetailFragment : Fragment() {
+class AdminReservationDetailFragment : DialogFragment() {
 
     companion object {
         private const val ARG_ID = "reservation_id"
@@ -32,6 +34,7 @@ class AdminReservationDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.ReservationDetailDialog)
         reservationId = arguments?.getLong(ARG_ID) ?: 0L
     }
 
@@ -39,11 +42,18 @@ class AdminReservationDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View = inflater.inflate(R.layout.fragment_admin_reservation_detail, container, false)
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).also {
+            it.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-        }
+        val dismissClick = View.OnClickListener { dismiss() }
+        view.findViewById<TextView>(R.id.btnClose).setOnClickListener(dismissClick)
+        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCerrar)
+            .setOnClickListener(dismissClick)
         loadDetail(view)
     }
 
@@ -66,6 +76,16 @@ class AdminReservationDetailFragment : Fragment() {
         }
     }
 
+    private fun formatDateTime(raw: String?): String {
+        if (raw.isNullOrBlank()) return "—"
+        return try {
+            val dt = LocalDateTime.parse(raw)
+            dt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+        } catch (e: Exception) {
+            raw.take(16).replace("T", " ")
+        }
+    }
+
     private fun bind(view: View, r: Reservation) {
         // Solicitante
         view.findViewById<TextView>(R.id.tvRequesterName).text = r.requesterName ?: "—"
@@ -76,22 +96,22 @@ class AdminReservationDetailFragment : Fragment() {
             else         -> r.requesterType ?: "—"
         }
 
-        // Recurso y horario
+        // Recurso
         val resourceName = r.resourceName ?: if (r.resourceType == "SPACE") r.spaceName else r.equipmentName
         view.findViewById<TextView>(R.id.tvResourceType).text =
             if (r.resourceType == "SPACE") "Espacio" else "Equipo"
         view.findViewById<TextView>(R.id.tvResourceName).text = resourceName ?: "—"
 
+        // Horario
         val scheduleParts = r.schedule?.split(" - ")
+        val startTime = r.startTime ?: scheduleParts?.getOrNull(0) ?: "—"
+        val endTime   = r.endTime   ?: scheduleParts?.getOrNull(1) ?: "—"
         view.findViewById<TextView>(R.id.tvStartDate).text = r.reservationDate ?: "—"
-        view.findViewById<TextView>(R.id.tvStartTime).text =
-            r.startTime ?: scheduleParts?.getOrNull(0) ?: "—"
-        view.findViewById<TextView>(R.id.tvEndDate).text =
-            r.endDate ?: r.reservationDate ?: "—"
-        view.findViewById<TextView>(R.id.tvEndTime).text =
-            r.endTime ?: scheduleParts?.getOrNull(1) ?: "—"
+        view.findViewById<TextView>(R.id.tvStartTime).text = startTime
+        view.findViewById<TextView>(R.id.tvEndDate).text   = r.endDate ?: r.reservationDate ?: "—"
+        view.findViewById<TextView>(R.id.tvEndTime).text   = endTime
 
-        // Estado con badge de color
+        // Estado badge
         val tvStatus = view.findViewById<TextView>(R.id.tvStatus)
         tvStatus.text = when (r.status ?: "") {
             "PENDIENTE" -> "Pendiente"
@@ -131,7 +151,7 @@ class AdminReservationDetailFragment : Fragment() {
                 "DAÑADO"      -> "Dañado"
                 else          -> r.returnCondition ?: "—"
             }
-            view.findViewById<TextView>(R.id.tvReturnedAt).text = r.returnedAt ?: "—"
+            view.findViewById<TextView>(R.id.tvReturnedAt).text = formatDateTime(r.returnedAt)
             view.findViewById<TextView>(R.id.tvReturnDescription).text =
                 r.returnDescription?.ifBlank { "—" } ?: "—"
         } else {

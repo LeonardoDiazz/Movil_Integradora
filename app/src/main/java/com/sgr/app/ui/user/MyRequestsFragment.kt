@@ -117,10 +117,8 @@ class MyRequestsFragment : Fragment() {
     }
 
     private fun navigateToDetail(r: Reservation) {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, ReservationDetailFragment.newInstance(r))
-            .addToBackStack(null)
-            .commit()
+        ReservationDetailFragment.newInstance(r)
+            .show(childFragmentManager, "reservation_detail")
     }
 
     private fun showViewReservationDialog(r: Reservation) {
@@ -206,11 +204,28 @@ class MyRequestsFragment : Fragment() {
     }
 
     private fun showRejectionReasonDialog(r: Reservation) {
-        val reason = r.adminComment?.takeIf { it.isNotBlank() } ?: "No se proporcionó motivo de rechazo."
-        AlertDialog.Builder(requireContext())
-            .setTitle("Motivo de rechazo")
-            .setMessage(reason)
-            .setPositiveButton("Cerrar", null).show()
+        val session = SessionManager(requireContext())
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.create(requireContext())
+                    .getMyReservation(r.id, session.userId)
+                val reason = if (response.isSuccessful) {
+                    response.body()?.adminComment?.takeIf { it.isNotBlank() }
+                        ?: "No se proporcionó motivo de rechazo."
+                } else {
+                    r.adminComment?.takeIf { it.isNotBlank() } ?: "No se proporcionó motivo de rechazo."
+                }
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Motivo de rechazo")
+                    .setMessage(reason)
+                    .setPositiveButton("Cerrar", null).show()
+            } catch (_: Exception) {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Motivo de rechazo")
+                    .setMessage(r.adminComment?.takeIf { it.isNotBlank() } ?: "No se proporcionó motivo de rechazo.")
+                    .setPositiveButton("Cerrar", null).show()
+            }
+        }
     }
 
     private fun showCancelConfirmDialog(r: Reservation, session: SessionManager) {

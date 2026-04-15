@@ -8,6 +8,7 @@ import android.text.style.StyleSpan
 import android.graphics.Typeface
 import android.view.*
 import android.widget.*
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -236,6 +237,53 @@ class NewRequestFragment : Fragment() {
         binding.tvBannerTitle.text = res.name
         binding.tvBannerSub.text = "${res.meta} • ${if (res.resourceType == "SPACE") "Espacio" else "Equipo"}"
 
+        val card = binding.root.findViewById<CardView>(R.id.cardSpaceEquipments)
+        val container = binding.root.findViewById<LinearLayout>(R.id.llSpaceEquipments)
+
+        if (res.resourceType == "SPACE") {
+            card.visibility = View.VISIBLE
+            container.removeAllViews()
+            lifecycleScope.launch {
+                try {
+                    val resp = RetrofitClient.create(requireContext()).getEquipmentsBySpace(res.id)
+                    if (resp.isSuccessful) {
+                        val list = resp.body() ?: emptyList()
+                        if (list.isEmpty()) {
+                            val tv = TextView(requireContext()).apply {
+                                text = "Sin equipos registrados en este espacio."
+                                textSize = 13f
+                                setTextColor(0xFF6B7280.toInt())
+                            }
+                            container.addView(tv)
+                        } else {
+                            list.forEach { eq ->
+                                val row = LayoutInflater.from(requireContext())
+                                    .inflate(R.layout.item_space_equipment, container, false)
+                                row.findViewById<TextView>(R.id.tvEqName).text = eq.name ?: "—"
+                                row.findViewById<TextView>(R.id.tvEqInventory).text = eq.inventoryNumber ?: ""
+                                val tvCond = row.findViewById<TextView>(R.id.tvEqCondition)
+                                val cond = eq.equipmentCondition ?: ""
+                                tvCond.text = when (cond.uppercase()) {
+                                    "DISPONIBLE"   -> "Disponible"
+                                    "EN_USO"       -> "En uso"
+                                    "MANTENIMIENTO"-> "Mantenimiento"
+                                    else           -> cond
+                                }
+                                when (cond.uppercase()) {
+                                    "DISPONIBLE"    -> { tvCond.setBackgroundResource(R.drawable.bg_badge_green); tvCond.setTextColor(0xFF065F46.toInt()) }
+                                    "EN_USO"        -> { tvCond.setBackgroundResource(R.drawable.bg_badge_blue);  tvCond.setTextColor(0xFF1D4ED8.toInt()) }
+                                    "MANTENIMIENTO" -> { tvCond.setBackgroundResource(R.drawable.bg_badge_yellow); tvCond.setTextColor(0xFF92400E.toInt()) }
+                                    else            -> { tvCond.setBackgroundResource(R.drawable.bg_badge_gray);   tvCond.setTextColor(0xFF6B7280.toInt()) }
+                                }
+                                container.addView(row)
+                            }
+                        }
+                    }
+                } catch (_: Exception) { }
+            }
+        } else {
+            card.visibility = View.GONE
+        }
     }
 
     private fun goToStep1() {

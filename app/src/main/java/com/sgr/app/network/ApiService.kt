@@ -63,6 +63,9 @@ interface ApiService {
     @GET("api/reservations/by-space/{spaceId}")
     suspend fun getSpaceHistory(@Path("spaceId") id: Long): Response<List<Reservation>>
 
+    @GET("api/equipments/by-space/{spaceId}")
+    suspend fun getEquipmentsBySpace(@Path("spaceId") id: Long): Response<List<Equipment>>
+
     // EQUIPMENT
     @GET("api/equipments")
     suspend fun getEquipments(

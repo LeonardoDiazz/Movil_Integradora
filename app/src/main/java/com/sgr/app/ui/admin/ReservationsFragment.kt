@@ -157,10 +157,8 @@ class ReservationsFragment : Fragment() {
     }
 
     private fun navigateToDetail(r: Reservation) {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, AdminReservationDetailFragment.newInstance(r))
-            .addToBackStack(null)
-            .commit()
+        AdminReservationDetailFragment.newInstance(r)
+            .show(childFragmentManager, "reservation_detail")
     }
 
     private fun showViewReservationDialog(r: Reservation) {

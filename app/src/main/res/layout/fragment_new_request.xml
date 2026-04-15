@@ -287,6 +287,41 @@
             </LinearLayout>
 
 
+            <!-- Equipos en este espacio (solo visible si el recurso es SPACE) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardSpaceEquipments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📦 Equipos en este espacio"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#111827"
+                        android:layout_marginBottom="10dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/llSpaceEquipments"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
             <!-- Form card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"

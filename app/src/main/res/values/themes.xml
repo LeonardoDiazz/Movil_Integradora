@@ -7,4 +7,10 @@
         <item name="colorSecondary">@color/blue_dark</item>
         <item name="android:statusBarColor">@color/green_primary</item>
     </style>
+
+    <style name="ReservationDetailDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:windowMinWidthMajor">92%</item>
+        <item name="android:windowMinWidthMinor">92%</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 </resources>
