@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/white">
+
+    <!-- Título -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No disponible"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="#111827"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Mensaje -->
+    <TextView
+        android:id="@+id/tvNotAvailableMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Error: este espacio no está disponible en el horario solicitado."
+        android:textSize="14sp"
+        android:textColor="#374151"
+        android:lineSpacingMultiplier="1.3"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- Botón ENTENDIDO -->
+    <TextView
+        android:id="@+id/btnNotAvailableOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="ENTENDIDO"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="#16A34A"
+        android:padding="8dp"
+        android:clickable="true"
+        android:focusable="true"/>
+
+</LinearLayout>

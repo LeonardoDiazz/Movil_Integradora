@@ -20,6 +20,9 @@ import com.sgr.app.model.RejectRequest
 import com.sgr.app.model.ReturnRequest
 import com.sgr.app.network.RetrofitClient
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ReservationsFragment : Fragment() {
 
@@ -153,6 +156,13 @@ class ReservationsFragment : Fragment() {
             .setNegativeButton("Cancelar", null).show()
     }
 
+    private fun navigateToDetail(r: Reservation) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, AdminReservationDetailFragment.newInstance(r))
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun showViewReservationDialog(r: Reservation) {
         val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_reservation_detail, null)
 
@@ -273,9 +283,9 @@ class ReservationsFragment : Fragment() {
                     binding.recyclerView.adapter = ReservationAdapter(filtered) { action, reservation ->
                         when (action) {
                             "approve" -> showApproveDialog(reservation)
-                            "reject" -> showRejectDialog(reservation)
-                            "return" -> showReturnDialog(reservation)
-                            "view" -> showViewReservationDialog(reservation)
+                            "reject"  -> showRejectDialog(reservation)
+                            "return"  -> showReturnDialog(reservation)
+                            "view"    -> navigateToDetail(reservation)
                         }
                     }
                 }
@@ -288,22 +298,85 @@ class ReservationsFragment : Fragment() {
     }
 
     private fun showApproveDialog(r: Reservation) {
-        val input = EditText(requireContext()).apply { hint = "Comentario (opcional)" }
-        AlertDialog.Builder(requireContext())
-            .setTitle("Aprobar reservación")
-            .setMessage("¿Aprobar la reserva de ${r.requesterName}?")
-            .setView(input)
-            .setPositiveButton("Aprobar") { _, _ ->
+        val resourceName = r.resourceName
+            ?: if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
+        val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_approve_confirm, null)
+        view.findViewById<TextView>(R.id.tvApproveMessage).text =
+            "¿Estás seguro que deseas aprobar la solicitud de ${r.requesterName ?: "este usuario"} para $resourceName?"
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(view)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnApproveCancelConfirm)
+            .setOnClickListener { dialog.dismiss() }
+
+        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnApproveConfirm)
+            .setOnClickListener {
+                dialog.dismiss()
                 lifecycleScope.launch {
                     try {
-                        RetrofitClient.create(requireContext()).approveReservation(r.id, ApproveRequest(input.text.toString().ifBlank { null }))
+                        val api = RetrofitClient.create(requireContext())
+                        val resourceId = r.spaceId ?: r.equipmentId ?: 0L
+
+                        if (resourceId == 0L) {
+                            showNotAvailableDialog(if (r.resourceType == "SPACE") "espacio" else "equipo")
+                            return@launch
+                        }
+
+                        val historyResp = if (r.resourceType == "SPACE")
+                            api.getSpaceHistory(resourceId)
+                        else
+                            api.getEquipmentHistory(resourceId)
+
+                        if (historyResp.isSuccessful) {
+                            val existing = historyResp.body() ?: emptyList()
+
+                            fun resolveTime(time: String?, schedule: String?, idx: Int) =
+                                time?.takeIf { it.isNotBlank() }
+                                    ?: schedule?.split(" - ")?.getOrNull(idx)?.trim() ?: ""
+
+                            val reqStartTime = resolveTime(r.startTime, r.schedule, 0)
+                            val reqEndTime   = resolveTime(r.endTime,   r.schedule, 1)
+                            val reqStart = "${r.reservationDate ?: ""} $reqStartTime"
+                            val reqEnd   = "${r.endDate ?: r.reservationDate ?: ""} $reqEndTime"
+
+                            val conflict = existing
+                                .filter { it.id != r.id && it.status == "APROBADA" }
+                                .any { ex ->
+                                    val exStart = "${ex.reservationDate ?: ""} ${resolveTime(ex.startTime, ex.schedule, 0)}"
+                                    val exEnd   = "${ex.endDate ?: ex.reservationDate ?: ""} ${resolveTime(ex.endTime, ex.schedule, 1)}"
+                                    exStart < reqEnd && reqStart < exEnd
+                                }
+
+                            if (conflict) {
+                                showNotAvailableDialog(if (r.resourceType == "SPACE") "espacio" else "equipo")
+                                return@launch
+                            }
+                        }
+
+                        api.approveReservation(r.id, ApproveRequest(null))
                         Toast.makeText(requireContext(), "Reservación aprobada", Toast.LENGTH_SHORT).show()
                         load()
-                    } catch (_: Exception) {}
+                    } catch (_: Exception) {
+                        Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        dialog.show()
+    }
+
+    private fun showNotAvailableDialog(resourceLabel: String) {
+        val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_not_available, null)
+        view.findViewById<TextView>(R.id.tvNotAvailableMessage).text =
+            "Error: este $resourceLabel no está disponible en el horario solicitado."
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(view)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        view.findViewById<TextView>(R.id.btnNotAvailableOk).setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
 
     private fun showRejectDialog(r: Reservation) {
@@ -338,6 +411,12 @@ class ReservationsFragment : Fragment() {
         val resourceName = r.resourceName
             ?: if (r.resourceType == "SPACE") r.spaceName ?: "—" else r.equipmentName ?: "—"
         view.findViewById<TextView>(R.id.tvReturnResource).text = resourceName
+
+        // Fechas
+        val plannedDate = r.endDate ?: r.reservationDate ?: "—"
+        view.findViewById<TextView>(R.id.tvPlannedDate).text = plannedDate
+        val nowFormatted = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault()).format(Date())
+        view.findViewById<TextView>(R.id.tvRealReturnDate).text = nowFormatted
 
         // Opciones de condición
         val optBuenEstado   = view.findViewById<LinearLayout>(R.id.optBuenEstado)

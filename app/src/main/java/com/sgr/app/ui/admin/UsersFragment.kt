@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sgr.app.R
 import com.sgr.app.databinding.FragmentUsersBinding
+import com.sgr.app.utils.showConfirmDialog
 import com.sgr.app.model.CreateUserRequest
 import com.sgr.app.model.UpdateUserRequest
 import com.sgr.app.model.User
@@ -236,10 +237,12 @@ class UsersFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            AlertDialog.Builder(ctx)
-                .setTitle(if (isCreate) "¿Registrar usuario?" else "¿Guardar cambios?")
-                .setMessage(if (isCreate) "Se creará un nuevo usuario. ¿Deseas continuar?" else "Se actualizarán los datos del usuario. ¿Deseas continuar?")
-                .setPositiveButton(if (isCreate) "Sí, registrar" else "Sí, guardar") { _, _ ->
+            showConfirmDialog(
+                ctx,
+                if (isCreate) "¿Registrar usuario?" else "¿Guardar cambios?",
+                if (isCreate) "Se creará un nuevo usuario. ¿Deseas continuar?" else "Se actualizarán los datos del usuario. ¿Deseas continuar?",
+                if (isCreate) "Sí, registrar" else "Sí, guardar"
+            ) {
                     lifecycleScope.launch {
                         try {
                             val api = RetrofitClient.create(ctx)
@@ -272,9 +275,7 @@ class UsersFragment : Fragment() {
                             } else Toast.makeText(ctx, "Error: ${resp.code()}", Toast.LENGTH_SHORT).show()
                         } catch (_: Exception) { Toast.makeText(ctx, "Error de conexión", Toast.LENGTH_SHORT).show() }
                     }
-                }
-                .setNegativeButton("Cancelar", null)
-                .show()
+            }
         }
 
         dialog.show()

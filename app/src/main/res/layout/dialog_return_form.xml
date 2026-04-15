@@ -102,6 +102,72 @@
             android:textColor="#111827"/>
     </LinearLayout>
 
+    <!-- ── FECHAS: Comprometida y Real ── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+
+        <!-- Fecha comprometida (amarillo) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_yellow"
+            android:padding="12dp"
+            android:layout_marginEnd="6dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FECHA COMPROMETIDA"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:textColor="#92400E"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvPlannedDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="—"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#B45309"/>
+        </LinearLayout>
+
+        <!-- Devolución real (verde) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_green_date"
+            android:padding="12dp"
+            android:layout_marginStart="6dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DEVOLUCIÓN REAL"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:textColor="#065F46"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvRealReturnDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="—"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#065F46"/>
+        </LinearLayout>
+    </LinearLayout>
+
     <!-- ── ESTADO DE DEVOLUCIÓN ── -->
     <TextView
         android:layout_width="wrap_content"

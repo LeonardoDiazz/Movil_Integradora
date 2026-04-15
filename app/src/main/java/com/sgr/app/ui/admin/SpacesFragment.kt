@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sgr.app.R
 import com.sgr.app.databinding.FragmentSpacesBinding
+import com.sgr.app.utils.showConfirmDialog
 import com.sgr.app.model.CreateSpaceRequest
 import com.sgr.app.model.Reservation
 import com.sgr.app.model.Space
@@ -293,10 +294,7 @@ class SpacesFragment : Fragment() {
                 val selectedAvail = availValues[availLabels.indexOfFirst { it == actvAvail.text.toString() }.coerceAtLeast(0)]
                 val isActive = actvStatus.text.toString() == "Activo"
 
-                AlertDialog.Builder(ctx)
-                    .setTitle("¿Guardar cambios?")
-                    .setMessage("Se actualizarán los datos del espacio. ¿Deseas continuar?")
-                    .setPositiveButton("Sí, guardar") { _, _ ->
+                showConfirmDialog(ctx, "¿Guardar cambios?", "Se actualizarán los datos del espacio. ¿Deseas continuar?") {
                         lifecycleScope.launch {
                             try {
                                 val req = CreateSpaceRequest(
@@ -319,8 +317,6 @@ class SpacesFragment : Fragment() {
                             }
                         }
                     }
-                    .setNegativeButton("Cancelar", null)
-                    .show()
             }
 
         dialog.show()

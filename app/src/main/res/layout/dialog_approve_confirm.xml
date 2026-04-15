@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/white">
+
+    <!-- Icono circular verde -->
+    <LinearLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:background="@drawable/bg_circle_green_light"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✓"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#16A34A"/>
+    </LinearLayout>
+
+    <!-- Título -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Aprobar Reserva"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#111827"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Mensaje -->
+    <TextView
+        android:id="@+id/tvApproveMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="¿Estás seguro que deseas aprobar esta solicitud?"
+        android:textSize="14sp"
+        android:textColor="#6B7280"
+        android:lineSpacingMultiplier="1.3"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Botones -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApproveCancelConfirm"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Cancelar"
+            android:textSize="14sp"
+            android:textColor="#6B7280"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="#D1D5DB"
+            xmlns:app="http://schemas.android.com/apk/res-auto"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApproveConfirm"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Sí, aprobar"
+            android:textSize="14sp"
+            android:backgroundTint="#16A34A"
+            style="@style/Widget.MaterialComponents.Button"/>
+    </LinearLayout>
+
+</LinearLayout>

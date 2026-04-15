@@ -19,6 +19,7 @@ import com.sgr.app.model.Equipment
 import com.sgr.app.model.Space
 import com.sgr.app.network.RetrofitClient
 import com.sgr.app.utils.SessionManager
+import com.sgr.app.utils.showErrorDialog
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -320,11 +321,11 @@ class NewRequestFragment : Fragment() {
                         }
 
                     if (conflict) {
-                        android.app.AlertDialog.Builder(requireContext())
-                            .setTitle("No disponible")
-                            .setMessage("Este ${if (res.resourceType == "SPACE") "espacio" else "equipo"} ya tiene una solicitud activa en el horario seleccionado. Por favor elige otra fecha u horario.")
-                            .setPositiveButton("Entendido", null)
-                            .show()
+                        showErrorDialog(
+                            requireContext(),
+                            "Horario no disponible",
+                            "Este ${if (res.resourceType == "SPACE") "espacio" else "equipo"} ya está ocupado en el horario seleccionado. Por favor elige otra fecha u horario."
+                        )
                         binding.btnSubmit.isEnabled = true
                         return@launch
                     }

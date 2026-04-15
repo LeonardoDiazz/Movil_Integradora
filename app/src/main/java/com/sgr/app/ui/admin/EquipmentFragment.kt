@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sgr.app.R
 import com.sgr.app.databinding.FragmentEquipmentBinding
+import com.sgr.app.utils.showConfirmDialog
 import com.sgr.app.model.CreateEquipmentRequest
 import com.sgr.app.model.Equipment
 import com.sgr.app.model.Reservation
@@ -311,10 +312,7 @@ class EquipmentFragment : Fragment() {
                 val selectedSpaceName = actvSpace.text.toString()
                 val spaceId = spacesList.find { it.name == selectedSpaceName }?.id
 
-                AlertDialog.Builder(ctx)
-                    .setTitle("¿Guardar cambios?")
-                    .setMessage("Se actualizarán los datos del equipo. ¿Deseas continuar?")
-                    .setPositiveButton("Sí, guardar") { _, _ ->
+                showConfirmDialog(ctx, "¿Guardar cambios?", "Se actualizarán los datos del equipo. ¿Deseas continuar?") {
                         lifecycleScope.launch {
                             try {
                                 val req = UpdateEquipmentRequest(
@@ -337,8 +335,6 @@ class EquipmentFragment : Fragment() {
                             }
                         }
                     }
-                    .setNegativeButton("Cancelar", null)
-                    .show()
             }
 
         dialog.show()

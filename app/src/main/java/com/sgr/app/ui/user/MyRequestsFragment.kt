@@ -22,6 +22,8 @@ import com.sgr.app.model.Reservation
 import com.sgr.app.model.UpdateReservationRequest
 import com.sgr.app.network.RetrofitClient
 import com.sgr.app.utils.SessionManager
+import com.sgr.app.utils.showConfirmDialog
+import com.sgr.app.utils.showErrorDialog
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -358,10 +360,7 @@ class MyRequestsFragment : Fragment() {
                 }
             } catch (_: Exception) { }
 
-            AlertDialog.Builder(requireContext())
-                .setTitle("¿Guardar cambios?")
-                .setMessage("Se actualizará tu solicitud. ¿Deseas continuar?")
-                .setPositiveButton("Sí, guardar") { _, _ ->
+            showConfirmDialog(requireContext(), "¿Guardar cambios?", "Se actualizará tu solicitud. ¿Deseas continuar?") {
                 lifecycleScope.launch {
                 try {
                     val api = RetrofitClient.create(requireContext())
@@ -387,11 +386,11 @@ class MyRequestsFragment : Fragment() {
                             }
 
                         if (conflict) {
-                            AlertDialog.Builder(requireContext())
-                                .setTitle("No disponible")
-                                .setMessage("Este ${if (r.resourceType == "SPACE") "espacio" else "equipo"} ya tiene una solicitud activa en el horario seleccionado. Por favor elige otra fecha u horario.")
-                                .setPositiveButton("Entendido", null)
-                                .show()
+                            showErrorDialog(
+                                requireContext(),
+                                "Horario no disponible",
+                                "Este ${if (r.resourceType == "SPACE") "espacio" else "equipo"} ya está ocupado en el horario seleccionado. Por favor elige otra fecha u horario."
+                            )
                             return@launch
                         }
                     }
@@ -419,9 +418,7 @@ class MyRequestsFragment : Fragment() {
                     Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_SHORT).show()
                 }
             }
-                }
-                .setNegativeButton("Cancelar", null)
-                .show()
+            }
         }
 
         dialog.show()

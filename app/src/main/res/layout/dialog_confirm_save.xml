@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="28dp"
+    android:background="@android:color/white">
+
+    <!-- Ícono "?" circular -->
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/bg_question_circle">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="?"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#3B82F6"/>
+    </FrameLayout>
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/tvConfirmTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Guardar cambios?"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#111827"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Mensaje -->
+    <TextView
+        android:id="@+id/tvConfirmMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Deseas continuar?"
+        android:textSize="14sp"
+        android:textColor="#374151"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Botones -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConfirmNegative"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Cancelar"
+            android:textSize="13sp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConfirmPositive"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:text="Sí, guardar"
+            android:textSize="13sp"
+            android:backgroundTint="#00843D"
+            style="@style/Widget.MaterialComponents.Button"/>
+    </LinearLayout>
+
+</LinearLayout>

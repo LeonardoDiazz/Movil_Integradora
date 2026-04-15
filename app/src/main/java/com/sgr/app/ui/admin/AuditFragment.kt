@@ -102,7 +102,7 @@ class AuditFragment : Fragment() {
                     val page = response.body() ?: return@launch
                     totalPages = page.totalPages.coerceAtLeast(1)
                     binding.tvPage.text = "Pág ${currentPage + 1} / $totalPages"
-                    binding.recyclerView.adapter = AuditAdapter(page.content) { r -> showAuditDetailDialog(r) }
+                    binding.recyclerView.adapter = AuditAdapter(page.content)
                 }
             } catch (_: Exception) {
                 Toast.makeText(requireContext(), "Error al cargar historial", Toast.LENGTH_SHORT).show()
@@ -146,8 +146,7 @@ class AuditFragment : Fragment() {
 }
 
 class AuditAdapter(
-    private val items: List<Reservation>,
-    private val onViewDetail: (Reservation) -> Unit
+    private val items: List<Reservation>
 ) : RecyclerView.Adapter<AuditAdapter.VH>() {
 
     inner class VH(val view: View) : RecyclerView.ViewHolder(view)
@@ -200,7 +199,6 @@ class AuditAdapter(
                 else        -> { tvStatus.setBackgroundResource(R.drawable.bg_badge_gray);   tvStatus.setTextColor(0xFF6B7280.toInt()) }
             }
 
-            setOnClickListener { onViewDetail(r) }
         }
     }
 }
