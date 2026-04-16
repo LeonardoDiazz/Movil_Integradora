@@ -316,47 +316,13 @@ class ReservationsFragment : Fragment() {
                 lifecycleScope.launch {
                     try {
                         val api = RetrofitClient.create(requireContext())
-                        val resourceId = r.spaceId ?: r.equipmentId ?: 0L
-
-                        if (resourceId == 0L) {
+                        val resp = api.approveReservation(r.id, ApproveRequest(null))
+                        if (resp.isSuccessful) {
+                            Toast.makeText(requireContext(), "Reservación aprobada", Toast.LENGTH_SHORT).show()
+                            load()
+                        } else {
                             showNotAvailableDialog(if (r.resourceType == "SPACE") "espacio" else "equipo")
-                            return@launch
                         }
-
-                        val historyResp = if (r.resourceType == "SPACE")
-                            api.getSpaceHistory(resourceId)
-                        else
-                            api.getEquipmentHistory(resourceId)
-
-                        if (historyResp.isSuccessful) {
-                            val existing = historyResp.body() ?: emptyList()
-
-                            fun resolveTime(time: String?, schedule: String?, idx: Int) =
-                                time?.takeIf { it.isNotBlank() }
-                                    ?: schedule?.split(" - ")?.getOrNull(idx)?.trim() ?: ""
-
-                            val reqStartTime = resolveTime(r.startTime, r.schedule, 0)
-                            val reqEndTime   = resolveTime(r.endTime,   r.schedule, 1)
-                            val reqStart = "${r.reservationDate ?: ""} $reqStartTime"
-                            val reqEnd   = "${r.endDate ?: r.reservationDate ?: ""} $reqEndTime"
-
-                            val conflict = existing
-                                .filter { it.id != r.id && it.status == "APROBADA" }
-                                .any { ex ->
-                                    val exStart = "${ex.reservationDate ?: ""} ${resolveTime(ex.startTime, ex.schedule, 0)}"
-                                    val exEnd   = "${ex.endDate ?: ex.reservationDate ?: ""} ${resolveTime(ex.endTime, ex.schedule, 1)}"
-                                    exStart < reqEnd && reqStart < exEnd
-                                }
-
-                            if (conflict) {
-                                showNotAvailableDialog(if (r.resourceType == "SPACE") "espacio" else "equipo")
-                                return@launch
-                            }
-                        }
-
-                        api.approveReservation(r.id, ApproveRequest(null))
-                        Toast.makeText(requireContext(), "Reservación aprobada", Toast.LENGTH_SHORT).show()
-                        load()
                     } catch (_: Exception) {
                         Toast.makeText(requireContext(), "Error de conexión", Toast.LENGTH_SHORT).show()
                     }
